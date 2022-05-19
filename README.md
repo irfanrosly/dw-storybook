@@ -1,70 +1,131 @@
-# Getting Started with Create React App
+# React Component with Storybook Integration
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and [Storybook](https://storybook.js.org/).
+
+You can see the live version of this project using this [LINK](https://raging-potato.netlify.app/)
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run storybook`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Runs the storybook in the development mode.\
+Open [http://localhost:3000](http://localhost:6006) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
+### `npm run build-storybook`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Run the command to compile you codes into static files\
+See this [Publish Storybook](https://storybook.js.org/docs/react/sharing/publish-storybook) for more information.
 
-### `npm run build`
+## Storybook Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Installation of the storybook is pretty simple. You can just run the command below to install the storybook.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+npx storybook init
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Follow the instructions and wait for the installations to complete. \
+Then, run the following command.
 
-### `npm run eject`
+```
+npm run storybook
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## How to Create a Stories
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Once you open your codebase, you will see `stories` folder under `src/` folder.\
+You can start to create a stories directly under `src/stories` folder.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. First we create the component. For example, a `Button` component .
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```javascript
+import React from "react";
+import PropTypes from "prop-types";
+import "./button.css";
 
-## Learn More
+/**
+ * Primary UI component for user interaction
+ */
+export const Button = ({ primary, backgroundColor, size, label, ...props }) => {
+	const mode = primary
+		? "storybook-button--primary"
+		: "storybook-button--secondary";
+	return (
+		<button
+			type="button"
+			className={["storybook-button", `storybook-button--${size}`, mode].join(
+				" "
+			)}
+			style={backgroundColor && { backgroundColor }}
+			{...props}
+		>
+			{label}
+		</button>
+	);
+};
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+2. We can create the stories for the button. For example `src/stories/Button.stories.jsx`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```javascript
+// Button.stories.js|jsx
 
-### Code Splitting
+import React from "react";
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+import { Button } from "./Button";
 
-### Analyzing the Bundle Size
+export default {
+	/* 👇 The title prop is optional.
+	 * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
+	 * to learn how to generate automatic titles
+	 */
+	title: "Button",
+	component: Button,
+};
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+export const Primary = () => <Button primary>Button</Button>;
+```
 
-### Making a Progressive Web App
+From the code above, you will get the following image when you start your storybook.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+![Stories-without-args](src%5Cstories%5Cassets%5Creadme%5Cexample-button-noargs.png)
 
-### Advanced Configuration
+## Adding Add-ons into a Stories
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Add-ons is storybook are called **Args**. **Args** can be used to dynamically change props, styles and many more. By having these, you can play around with your components and see the changes on the fly.
 
-### Deployment
+This is how you can add args into your existing story.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```javascript
+// Button.stories.js|jsx
 
-### `npm run build` fails to minify
+import React from "react";
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+import { Button } from "./Button";
+
+export default {
+	/* 👇 The title prop is optional.
+	 * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
+	 * to learn how to generate automatic titles
+	 */
+	title: "Button",
+	component: Button,
+};
+
+//👇 We create a “template” of how args map to rendering
+const Template = (args) => <Button {...args} />;
+
+//👇 Each story then reuses that template
+export const Primary = Template.bind({});
+Primary.args = {
+	primary: true,
+	label: "Button",
+};
+```
+
+You can read more about args [here](https://storybook.js.org/docs/react/writing-stories/args).
