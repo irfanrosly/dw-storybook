@@ -93,7 +93,7 @@ export const Primary = () => <Button primary>Button</Button>;
 
 From the code above, you will get the following image when you start your storybook.
 
-![Stories-without-args](src%5Cstories%5Cassets%5Creadme%5Cexample-button-noargs.png)
+![Stories-without-args](./src/stories/assets/readme/example-button-noargs.png)
 
 ## Adding Add-ons into a Stories
 
